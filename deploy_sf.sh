@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# Deploy website to sourceforge
+#
+# Usage: ./deploy_sf [SOURCEFORGE_USERNAME]
+#
+# If the username is not provided as an argument,
+# the SF_USER variable will be used if it is set.
+# If SF_USER is not set, the login username is used.
+#
+# Set up ssh keys without passphrases
+# to bypass the password prompts.
+
+function deploy
+{
+    local sftp_server="web.sf.net"
+    local ssh_server="shell.sf.net"
+    local sf_site_dir="/home/project-web/yoshimi"
+
+    local calling_dir="$(pwd)"
+
+    # Make sure the site generation script is present
+    local gen_script="gen_site.py"
+    local script_dir=$(dirname $(readlink -f "$1"))
+    if [ ! -e "$script_dir/$gen_script" ]; then
+	echo "$gen_script is missing in $script_dir!"
+	exit 1
+    fi
+
+    # If neither argument nor SF_USER is set, the variable being empty
+    # will result in the active users name being used implicitly
+    local username="$2"
+    if [ -z "$username" ]; then
+	username="$SF_USER"
+    fi
+    if [ -n "$username" ]; then
+	username="$username""@"
+    fi
+
+
+    # Build and package website
+    cd "$script_dir"
+    local BUILD_DIR="$(mktemp -d)"
+    BUILD_DIR="$BUILD_DIR" "./$gen_script"
+
+    cd "$BUILD_DIR"
+    zip -q -r site.zip *
+
+
+    # Put packaged site on server
+    local sftp_cmd="put site.zip $sf_site_dir/site.zip"
+    echo  "$sftp_cmd" | sftp -b - "$username""$sftp_server"
+
+
+    # Log in Remove old site files and extract the new ones
+    ssh "$username""$ssh_server" create
+    local ssh_cmd="cd $sf_site_dir/htdocs && rm -rf * && unzip -q ../site.zip"
+    # End the session when finished, unless some previous step failed
+    # (in which case the shell staying up is nice for manual investigation)
+    ssh_cmd="$ssh_cmd && shutdown"
+    ssh "$username""$ssh_server" "$ssh_cmd"
+
+
+    # Clean up
+    cd "$calling_dir"
+    rm -rf "$BUILD_DIR"
+}
+
+deploy "$0" "$1"
