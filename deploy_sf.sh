@@ -9,15 +9,13 @@
 # If SF_USER is not set, the login username is used.
 #
 # Set up ssh keys without passphrases
-# to bypass the password prompts.
+# to bypass the password prompts and make sure
+# that the servers fingerprints are added before
+# running this.
 
 function deploy
 {
-    local sftp_server="web.sf.net"
-    local ssh_server="shell.sf.net"
-    local sf_site_dir="/home/project-web/yoshimi"
-
-    local calling_dir="$(pwd)"
+    local origin_dir="$(pwd)"
 
     # Make sure the site generation script is present
     local gen_script="gen_site.py"
@@ -47,22 +45,31 @@ function deploy
     zip -q -r site.zip *
 
 
+    # Server location variables
+    local sf_site_dir="/home/project-web/yoshimi"
+    local ssh_server="shell.sf.net"
+    local sftp_server="web.sf.net"
+
+
     # Put packaged site on server
     local sftp_cmd="put site.zip $sf_site_dir/site.zip"
-    echo  "$sftp_cmd" | sftp -b - "$username""$sftp_server"
+    echo "Uploading archive..."
+    echo  "$sftp_cmd" | sftp -q -b - "$username""$sftp_server"
 
 
     # Log in Remove old site files and extract the new ones
-    ssh "$username""$ssh_server" create
+    ssh -q "$username""$ssh_server" create
     local ssh_cmd="cd $sf_site_dir/htdocs && rm -rf * && unzip -q ../site.zip"
     # End the session when finished, unless some previous step failed
     # (in which case the shell staying up is nice for manual investigation)
     ssh_cmd="$ssh_cmd && shutdown"
+    echo "Removing old site and extracting new files..."
     ssh "$username""$ssh_server" "$ssh_cmd"
 
 
     # Clean up
-    cd "$calling_dir"
+    echo "Cleaning up..."
+    cd "$origin_dir"
     rm -rf "$BUILD_DIR"
 }
 
