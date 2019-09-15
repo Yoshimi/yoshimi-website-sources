@@ -1,7 +1,7 @@
-# yoshimi.github.io
+# Yoshimi website sources
 
 Markup, style data and media for the yoshimi website,
-along with a simple site generation script.
+along with a few scripts for generation and deployment.
 
 ## Building
 
