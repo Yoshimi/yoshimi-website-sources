@@ -35,14 +35,16 @@ function deploy
 	username="$username""@"
     fi
 
+    set -e
 
     # Build and package website
     cd "$script_dir"
-    local BUILD_DIR="$(mktemp -d)"
+    local BUILD_DIR
+    BUILD_DIR="$(mktemp -d)"
     BUILD_DIR="$BUILD_DIR" "./$gen_script"
 
     cd "$BUILD_DIR"
-    zip -q -r site.zip *
+    zip -q -r site.zip ./*
 
 
     # Server location variables
