@@ -40,6 +40,7 @@ def gen_site(conf_data):
     menu_link_list = conf_data["menu_links"]
     template_path = conf_data["template"]
     to_copy = conf_data.get("copy", None)
+    external_copy = conf_data.get("copy_external", None)
     template = readfile(template_path)
 
     tmp_dir = tempfile.mkdtemp()
@@ -61,6 +62,8 @@ def gen_site(conf_data):
 
     if to_copy:
         copy_files(to_copy)
+    if external_copy:
+        copy_from_to(external_copy)
     # It seems everything worked out
     logger.info(
         'Website files successfully written to "{output_dir}/".'.format(
@@ -121,6 +124,13 @@ def copy_files(to_copy):
     for src in to_copy:
         name = path.basename(src)
         dst = path.join(BUILD_DIR, name)
+        copy = dir_util.copy_tree if path.isdir(src) else file_util.copy_file
+        copy(src, dst)
+
+
+def copy_from_to(src_dest_dict):
+    for src, dest in src_dest_dict.items():
+        dst = path.join(BUILD_DIR, dest)
         copy = dir_util.copy_tree if path.isdir(src) else file_util.copy_file
         copy(src, dst)
 

@@ -1,4 +1,7 @@
 {
+    "copy_external": {
+	"../yoshimi/doc/yoshimi_user_guide": "docs/user-guide"
+    },
     "copy": [
 	"style.css",
 	"original.html",
