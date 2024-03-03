@@ -50,7 +50,7 @@ function deploy
     # Server location variables
     local sf_site_dir="/home/project-web/yoshimi"
     local ssh_server="shell.sf.net"
-    local sftp_server="web.sf.net"
+    local sftp_server="web.sourceforge.net"
 
 
     # Put packaged site on server
