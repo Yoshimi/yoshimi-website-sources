@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Build script for the yoshimi web site
 #
 # Do not use this for anything complex,
