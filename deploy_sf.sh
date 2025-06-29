@@ -18,7 +18,7 @@ function deploy
     local origin_dir="$(pwd)"
 
     # Make sure the site generation script is present
-    local gen_script="gen_site.py"
+    local gen_script="build.py"
     local script_dir=$(dirname $(readlink -f "$1"))
     if [ ! -e "$script_dir/$gen_script" ]; then
 	echo "$gen_script is missing in $script_dir!"
@@ -41,7 +41,7 @@ function deploy
     cd "$script_dir"
     local BUILD_DIR
     BUILD_DIR="$(mktemp -d)"
-    BUILD_DIR="$BUILD_DIR" "./$gen_script"
+    "./$gen_script" --output $BUILD_DIR
 
     cd "$BUILD_DIR"
     zip -q -r site.zip ./*

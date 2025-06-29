@@ -3,27 +3,77 @@
 Markup, style data and media for the yoshimi website,
 along with a few scripts for generation and deployment.
 
+The website is built using [jinja](https://jinja.palletsprojects.com/en/stable/) templates and a simple build script,
+and is deployed at https://yoshimi.github.io/ and https://yoshimi.sourceforge.io/.
+
+## Prerequisites and configuration
+
+Python 3.9 or higher is required to generate the site.
+
+### Set up and activate the virtual environment
+
+Run
+```
+python -m venv .venv
+python -m pip install -r requirements.txt
+. .venv/bin/activate
+```
+
 ## Building
 
-Python 2.7+ (or 3.5+) is required to generate the site.
+After activating the virtual environment, run:
 
-Run `./gen_site` in the _site directory to generate the site.
-The resulting files will be placed in a directory called 'out'
+```
+./build.py
+```
 
-If you want to write the output somewhere else, you can use the `BUILD_DIR`
-environment variable, for example like this:
+The generated site is now placed in the directory `site`.
+
+## Overview of setup
+
+The site is generated using `build.py` which bases it output solely on the data in the `src` directory.
+
+### `src/pages`
+
+Contains jinja templates that are rendered to static html.
+Which pages are actually rendered is specified in `build.py`.
+
+### `src/fragments`
+
+Contains fragments or templates that are reused by inclusion. Currently only contains the main template used by all pages.
+
+### `src/assets`
+
+Subdirectories in this directory are copied directly to the root of the generated site.
+
+### `src/data`
+
+This directory should only contain yaml files containing data to be used in the page templates.
+Each file should have one or more top level keys corresponding to the pages where the data under that key may be used.
+
+In the following example, bar and baz can be used in the page named foo:
+```yaml
+foo:
+  bar: 
+    a: 42
+    b: 96
+  baz:
+    - hello
+    - world
 ```
-BUILD_DIR=/home/me/www/my_audio_websites/yoshimi/ ./gen_site
-```
-or
-```
-export BUILD_DIR=/home/me/www/my_audio_websites/yoshimi/
-./gen_site
-```
-or
-```
-BUILD_DIR=.. ./gen_site
-```
+The file names do not matter, only the top level keys.
+
+⚠️ Keys are not merged deeply, so data used in one page cannot be split between different data files!
+
+## Data & Assets from external sources
+
+The user guide in `src/assets/docs/user-guide` is a copy from `doc/yoshimi_user_guide` which
+should be updated on every release.
+
+The version data in `src/data/version_data.yaml` is fetched using `git tag` in the yoshimi repo.
+
+Yoshimi repo: https://github.com/Yoshimi/yoshimi
+
 
 ## Committing/Deploying
 

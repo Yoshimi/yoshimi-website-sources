@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <link rel=stylesheet type="text/css" href="stylesheets/style.css" />
+  <link rel="icon" href="img/favicon.png" type="image/x-icon" />
+</head>
+
+<body>
+  <header>
+    <div id="logo-wrapper">
+      <a href="./"><img id="logo" src="img/logo.png" alt="Yoshimi" /></a>
+      <a href="./"><img id="robot" src="img/robot_head.png" alt="Pink robot" /></a>
+    </div>
+    <div id="subtitle">
+      Software synthesizer for Linux
+    </div>
+  </header>
+  <div class="nav-wrapper">
+    <nav>
+      {% block menu %}
+      {% for item in nav_links %}
+      <span class="nav-row">
+        <a href="{{ item.alt_url or (item.page + '.html')}}" {% if page==item.page %} class="active" {% endif %}>{{
+          item.title }}</a>
+      </span>
+      {% endfor %}
+      {% endblock %}
+    </nav>
+  </div>
+  <div id="main-wrapper">
+    <main>
+      {% block content required %}
+      {% endblock %}
+    </main>
+  </div>
+  <footer>
+    {% block footer %}
+    <div class="links">
+      {% for item in footer_links %}
+      <span class="nav-row">
+        <a href="{{ item.page }}.html" {% if page==item.page %} class="active" {% endif %}>{{ item.title }}</a>
+      </span>
+      {% endfor %}
+    </div>
+    <div class="updated-date"> Updated {{ updated }} </div>
+    {% endblock %}
+  </footer>
+</body>
+
+</html>

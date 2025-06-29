@@ -90,7 +90,7 @@ $commit_msg"
 
     # Build site
     local BUILD_DIR="$(mktemp -d)"
-    BUILD_DIR="$BUILD_DIR" ./gen_site.py
+    ./build.py --output $BUILD_DIR
 
     if [ "$?" != "0" ]; then
 	error "Site generation failed, aborting!"

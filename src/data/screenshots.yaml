@@ -1,0 +1,65 @@
+screenshots:
+  screenshots:
+    - alt: main gui window
+      caption: The main window - the starting point for most Yoshimi adventures
+      src: Main
+    - alt: mixer window
+      caption: Mixer controls in 8x2 configuration, with 6 active parts
+      src: Mixer
+    - alt: virtual keyboard
+      caption: The virtual keyboard, containing many additional controls
+      src: VirtualKeyboard
+    - alt: instrument bank selection
+      caption: The instrument bank selection window
+      src: BankOverview
+    - alt: instrument bank
+      caption: Just one of the many instrument banks that are shipped with Yoshimi.
+      src: InstrumentBank
+    - alt: example of instrument properties
+      caption: An example of instrument properties - active engines and metadata
+      src: InstrumentProperties
+    - alt: pad-synth controls
+      caption: Controls for the PadSynth engine
+      src: PadSynth
+    - alt: pad-synth envelope controls
+      caption: Envelope controls for the PadSynth engine
+      src: PadSynthEnvelopes
+    - alt: sub-synth controls
+      caption: Controls for the SubSynth engine
+      src: SubSynth
+    - alt: resonance control window
+      caption: A resonance control window - in this case for an AddSynth voice
+      src: Resonance
+    - alt: add-synth controls
+      caption: Controls for the AddSynth engine
+      src: AddSynth
+    - alt: voice parameter controls
+      caption: Controls for an AddSynth voice - each instance can have up to 8 voices.
+      src: VoiceParams
+    - alt: voice list window
+      caption:
+        The voice list provides an overview and an easy way to navigate and tweak
+        important parameters.
+      src: VoicesList
+    - alt: waveform editor
+      caption: Waveform controls - with both simple and advanced means of adjustment.
+      src: WaveformEditor
+    - alt: vector control configuration
+      caption: Vector configuration - for controlling parameters with a joystick.
+      src: Vectors
+    - alt: instrument search
+      caption: Instrument search - making it easier to locate instruments by types
+      src: InstrumentSearch
+    - alt: part controller settings
+      caption:
+        Per-part controllers of various dynamic properties; filters, panning, bandwidth,
+        etc.
+      src: Controllers
+    - alt: aftertouch settings
+      caption:
+        Basic settings for which aspects of a part aftertouch can affect, by key
+        and/or channel.
+      src: AftertouchSettings
+    - alt: file browser
+      caption: A custom file browser with support for favourite directories.
+      src: FilerFiles

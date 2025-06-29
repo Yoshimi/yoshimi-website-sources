@@ -1,0 +1,19 @@
+{% extends "fragments/template.html.jinja" %}
+{% block content %}
+<h1>Screenshots</h1>
+
+<div class="screenshots">
+  <p>
+    Here you can find screenshots showing some of Yoshimi's many controls.
+  </p>
+  {% for screenshot in screenshots %}
+  <figure>
+    <img alt="{{screenshot.alt}}" src="img/ui/{{screenshot.src}}.png" />
+    <figcaption>
+      {{ screenshot.caption }}
+    </figcaption>
+  </figure>
+  {% endfor %}
+</div>
+
+{% endblock %}
