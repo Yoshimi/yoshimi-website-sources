@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: yoshimi/yoshimi.github.io
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.YOSHIMI_WEBSITE_TOKEN }}
           path: target
       - name: Prep, check and commit
         run: |
