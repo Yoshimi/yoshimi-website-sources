@@ -1,0 +1,59 @@
+# This generates and deploys the website to yoshimi.github.io using Github Actions
+
+name: Build and deploy site
+
+on:
+  push:
+    branches: [ "master" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: source
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+    - name: Install dependencies
+      run: |
+        cd source
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Build site
+      run: |
+        cd source
+        python build.py
+    - name: Checkout target repo
+      uses: actions/checkout@v4
+      with:
+        repository: yoshimi/yoshimi.github.io
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: target
+    - name: Prep, check and commit
+      run: |
+        cd target
+        git config user.name "Tireless Yoshimi Robot"
+        git config user.email "actions@github.com"
+
+        # Move the readme file so it won't be removed
+        mv README.md ../source/site/
+        # Out with the old, in with the new
+        git rm --quiet -r *
+        cp -r ../source/site/* .
+        git add -A
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Create commit
+          git commit -m "Deploy site from source update (${{ github.sha }})"
+          # Push changes
+          git push origin master
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
