@@ -78,7 +78,6 @@ Yoshimi repo: https://github.com/Yoshimi/yoshimi
 ## Committing/Deploying
 
 The site is deployed to both github pages and sourceforge.
-There is one deployment script for each destination.
 
 ## Sourceforge
 
@@ -88,7 +87,5 @@ See the script header for details.
 
 ## Github pages
 
-The `deploy_gh.sh` script stages a commit to the yoshimi.github.io repo with
-the updated generated files. A clone of that repo must be present on the machine
-running the script.
-See the script header for details.
+The deployment to yoshimi.github.io is made using Github Actions.
+See `.github/workflows/build-and-deploy.yaml` in this repo.
