@@ -27,6 +27,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build site
       run: |
+        cd source
         python build.py
     - name: Checkout target repo
       uses: actions/checkout@v4
