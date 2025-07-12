@@ -50,7 +50,7 @@ jobs:
           mv README.md ../source/site/
           # Out with the old, in with the new
           git rm --quiet -r *
-          cp -r ../source/site/* .
+          cp -r ../source/site/* ../source/site/.* .
           git add -A
           if git diff --staged --quiet; then
             echo "No changes to commit"
