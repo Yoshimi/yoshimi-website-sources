@@ -30,16 +30,20 @@ jobs:
         run: |
           cd source
           python build.py
-      - name: Checkout target repo
-        uses: actions/checkout@v4
+      - name: Setup SSH key for publishing
+        uses: webfactory/ssh-agent@v0.9.1
         with:
-          repository: yoshimi/yoshimi.github.io
-          token: ${{ secrets.YOSHIMI_WEBSITE_TOKEN }}
-          path: target
+          ssh-private-key: ${{ secrets.YOSHIMI_GITHUB_IO_DEPLOYMENT_PRIVKEY }}
+      - name: Add SSH known hosts
+        run: |
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+      - name: Clone target repository
+        run: |
+          git clone git@github.com:Yoshimi/yoshimi.github.io.git target
       - name: Prep, check and commit
         run: |
           cd target
-          git config user.name "Tireless Yoshimi Robot"
+          git config user.name "TYPR - Tireless Yoshimi Publishing Robot"
           git config user.email "actions@github.com"
 
           # Move the readme file so it won't be removed
@@ -56,5 +60,3 @@ jobs:
             # Push changes
             git push origin master
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.YOSHIMI_WEBSITE_TOKEN }}
