@@ -75,6 +75,9 @@ def main():
         shutil.rmtree(args.output)
     os.mkdir(args.output)
 
+    for extra in os.listdir("./src/meta"):
+        shutil.copyfile(f"./src/meta/{extra}", f"{args.output}/{extra}")
+
     for dir in os.listdir("./src/assets"):
         shutil.copytree(f"./src/assets/{dir}", f"{args.output}/{dir}")
 
