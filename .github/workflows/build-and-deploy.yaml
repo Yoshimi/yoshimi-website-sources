@@ -1,4 +1,4 @@
-# This generates and deploys the website to yoshimi.github.io using Github Actions
+# This generates and deploys the website to yoshimi.github.io and yoshimi.sourceforge.io using Github Actions
 
 name: Build and deploy site
 
@@ -10,8 +10,14 @@ permissions:
   contents: write
   pages: write
 
+# The workflow is split up into three jobs.
+# The first job generates the website and stores the result as a build artifact
+# The second and third jobs run in parallell after the first job
+# and each use the artifact produced in the first job to deploy the site.
+
 jobs:
-  build-and-deploy:
+  build-website:
+    name: "Build Website"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +36,23 @@ jobs:
         run: |
           cd source
           python build.py
+      - name: Upload artifact with generated site
+        uses: actions/upload-artifact@v4
+        with:
+          name: compressed-site
+          path: source/site/
+          retention-days: 1 # Temp - this should be at least a few days
+          include-hidden-files: true
+  deploy-to-github:
+    name: Deploy to Github
+    needs: build-website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        name: Download artifact with site
+        with:
+          name: compressed-site
+          path: site
       - name: Setup SSH key for publishing
         uses: webfactory/ssh-agent@v0.9.1
         with:
@@ -46,11 +69,13 @@ jobs:
           git config user.name "TYPR - Tireless Yoshimi Publishing Robot"
           git config user.email "actions@github.com"
 
+          ls ../site
+
           # Move the readme file so it won't be removed
-          mv README.md ../source/site/
+          mv README.md ../site/
           # Out with the old, in with the new
           git rm --quiet -r *
-          cp -r ../source/site/* ../source/site/.* .
+          cp -r ../site/* ../site/.* .
           git add -A
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -58,5 +83,34 @@ jobs:
             # Create commit
             git commit -m "Deploy site from source update (${{ github.sha }})"
             # Push changes
-            git push origin master
+            # git push origin master # disabled while testing
+            git show HEAD
           fi
+  deploy-to-sourceforge:
+    name: Deploy to Sourceforge
+    needs: build-website
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact with site
+        uses: actions/download-artifact@v4
+        with:
+          name: compressed-site
+          path: site
+      - name: Setup SSH key for Sourceforge
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.YOSHIMI_SOURCEFORGE_DEPLOYMENT_PRIVKEY }}
+      - name: Add SSH known hosts
+        run: |
+          ssh-keyscan -H web.sourceforge.net >> ~/.ssh/known_hosts
+          ssh-keyscan -H shell.sf.net >> ~/.ssh/known_hosts
+      - name: Deploy to sourceforge
+        env:
+          SOURCEFORGE_USER: ${{ secrets.SOURCEFORGE_USER }}
+        # Zip up generated site, upload it to sourceforge via sftp, request shell, unpack the site on the sourceforge server
+        run: |
+          set -e
+          zip -q -r site.zip site/* site/.*
+          scp site.zip $SOURCEFORGE_USER@web.sourceforge.net:/home/project-web/yoshimi/site.zip
+          ssh $SOURCEFORGE_USER@shell.sf.net create
+          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && rm -rf * && unzip -q ../site.zip && shutdown'
