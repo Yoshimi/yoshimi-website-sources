@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: source
+          fetch-depth: 8 # somewhat arbitrary - the goal here is to reach the latest changes in the src folder
       - name: Set up Python 3.13
         uses: actions/setup-python@v3
         with:
@@ -83,8 +84,7 @@ jobs:
             # Create commit
             git commit -m "Deploy site from source update (${{ github.sha }})"
             # Push changes
-            # git push origin master # disabled while testing
-            git show HEAD
+            git push origin master
           fi
   deploy-to-sourceforge:
     name: Deploy to Sourceforge
@@ -110,7 +110,9 @@ jobs:
         # Zip up generated site, upload it to sourceforge via sftp, request shell, unpack the site on the sourceforge server
         run: |
           set -e
-          zip -q -r site.zip site/* site/.*
+          cd site
+          zip -q -r ../site.zip * .*
+          cd ..
           scp site.zip $SOURCEFORGE_USER@web.sourceforge.net:/home/project-web/yoshimi/site.zip
           ssh $SOURCEFORGE_USER@shell.sf.net create
           ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && rm -rf * && unzip -q ../site.zip && shutdown'
