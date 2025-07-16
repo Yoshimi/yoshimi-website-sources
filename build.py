@@ -5,8 +5,8 @@ from jinja2 import Environment, FileSystemLoader
 from yaml import load, SafeLoader
 import shutil
 from pathlib import Path
-
 import datetime
+import subprocess
 
 
 def menu_item(title, filename):
@@ -33,7 +33,10 @@ NAV_ITEMS = [
 ENV_GLOBALS = {
     "footer_links": FOOTER_ITEMS,
     "nav_links": NAV_ITEMS,
-    "updated": datetime.date.today().isoformat(),
+    # The "last updated" date is based on the latest change to the src folder.
+    "updated": subprocess.check_output(
+        ["git", "log", "-n", "1", "--format=%as", "src"], text=True
+    ).strip(),
 }
 
 
