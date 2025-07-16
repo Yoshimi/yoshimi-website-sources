@@ -35,7 +35,7 @@ ENV_GLOBALS = {
     "nav_links": NAV_ITEMS,
     # The "last updated" date is based on the latest change to the src folder.
     "updated": subprocess.check_output(
-        ["git", "log", "-n", "1", "--format=%as", "src"], text=True
+        ["git", "log", "-n", "1", "--format=%as", "./src"], text=True
     ).strip(),
 }
 
