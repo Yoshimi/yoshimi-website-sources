@@ -76,7 +76,7 @@ jobs:
           mv README.md ../site/
           # Out with the old, in with the new
           git rm --quiet -r *
-          cp -r ../site/* ../site/.* .
+          command cp -r ../site/* ../site/.* .
           git add -A
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -111,8 +111,12 @@ jobs:
         run: |
           set -e
           cd site
+          echo Zipping up site ...
           zip -q -r ../site.zip * .*
           cd ..
+          echo Copying zip archive to sourceforge
           scp site.zip $SOURCEFORGE_USER@web.sourceforge.net:/home/project-web/yoshimi/site.zip
+          echo Creating shell for unpacking
           ssh $SOURCEFORGE_USER@shell.sf.net create
-          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && rm -rf * && unzip -q ../site.zip && shutdown'
+          echo Unpacking and setting up new version of site
+          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && command rm -rf * && unzip -q ../site.zip && shutdown'
