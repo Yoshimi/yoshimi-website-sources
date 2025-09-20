@@ -119,4 +119,4 @@ jobs:
           echo Creating shell for unpacking
           ssh $SOURCEFORGE_USER@shell.sf.net create
           echo Unpacking and setting up new version of site
-          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && command rm -rf * && unzip -q ../site.zip && shutdown'
+          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && command rm -rf * && unzip -q -n ../site.zip; shutdown'
