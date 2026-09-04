@@ -103,20 +103,13 @@ jobs:
       - name: Add SSH known hosts
         run: |
           ssh-keyscan -H web.sourceforge.net >> ~/.ssh/known_hosts
-          ssh-keyscan -H shell.sf.net >> ~/.ssh/known_hosts
       - name: Deploy to sourceforge
         env:
           SOURCEFORGE_USER: ${{ secrets.SOURCEFORGE_USER }}
-        # Zip up generated site, upload it to sourceforge via sftp, request shell, unpack the site on the sourceforge server
+        # rsync the generated site straight to project-web htdocs over SSH.
+        # (The old zip + shell.sf.net "create shell" + remote unzip flow no longer
+        # works: shell.sf.net stopped accepting SSH connections. web.sourceforge.net
+        # still supports SFTP/SCP/rsync, so we sync directly instead.)
         run: |
           set -e
-          cd site
-          echo Zipping up site ...
-          zip -q -r ../site.zip * .*
-          cd ..
-          echo Copying zip archive to sourceforge
-          scp site.zip $SOURCEFORGE_USER@web.sourceforge.net:/home/project-web/yoshimi/site.zip
-          echo Creating shell for unpacking
-          ssh $SOURCEFORGE_USER@shell.sf.net create
-          echo Unpacking and setting up new version of site
-          ssh $SOURCEFORGE_USER@shell.sf.net 'cd /home/project-web/yoshimi/htdocs && command rm -rf * && unzip -q -n ../site.zip; shutdown'
+          rsync -az --delete -e ssh site/ $SOURCEFORGE_USER@web.sourceforge.net:/home/project-web/yoshimi/htdocs/
