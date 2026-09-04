@@ -20,12 +20,12 @@ jobs:
     name: "Build Website"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: source
           fetch-depth: 8 # somewhat arbitrary - the goal here is to reach the latest changes in the src folder
       - name: Set up Python 3.13
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Install dependencies
@@ -38,7 +38,7 @@ jobs:
           cd source
           python build.py
       - name: Upload artifact with generated site
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compressed-site
           path: source/site/
@@ -49,13 +49,13 @@ jobs:
     needs: build-website
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         name: Download artifact with site
         with:
           name: compressed-site
           path: site
       - name: Setup SSH key for publishing
-        uses: webfactory/ssh-agent@v0.9.1
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.YOSHIMI_GITHUB_IO_DEPLOYMENT_PRIVKEY }}
       - name: Add SSH known hosts
@@ -92,12 +92,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact with site
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: compressed-site
           path: site
       - name: Setup SSH key for Sourceforge
-        uses: webfactory/ssh-agent@v0.9.1
+        uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.YOSHIMI_SOURCEFORGE_DEPLOYMENT_PRIVKEY }}
       - name: Add SSH known hosts
