@@ -3,6 +3,12 @@
 downloads:
   num_old_versions_shown: 10
   versions:
+    - date: 2026-08-17
+      version: 2.3.6.5
+    - date: 2026-06-13
+      version: 2.3.6.4
+    - date: 2026-03-11
+      version: 2.3.6.2
     - date: 2026-02-17
       version: 2.3.6.1
     - date: 2026-02-14
